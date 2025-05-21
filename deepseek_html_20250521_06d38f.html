@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陕西交控沥青公司出入库系统</title>
+    <style>
+        /* 欢迎页面样式 */
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            background-image: url('https://img.freepik.com/free-photo/concrete-texture_1194-6501.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .welcome-container {
+            max-width: 800px;
+            margin: 100px auto;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        .welcome-title {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .entry-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+        }
+        .entry-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            width: 200px;
+        }
+        .upstream-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        .downstream-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .entry-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .login-form {
+            max-width: 500px;
+            margin: 30px auto 0;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        /* 主系统样式 */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 12px 25px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 5px 5px 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background-color: #1a252f;
+            transform: translateY(-2px);
+        }
+        button.secondary {
+            background-color: #e74c3c;
+        }
+        button.secondary:hover {
+            background-color: #c0392b;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .status {
+            padding: 8px 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status.completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .hidden {
+            display: none;
+        }
+        .supplier-password {
+            background-color: #e7f3fe;
+            padding: 10px;
+            border-left: 6px solid #3498db;
+            margin-bottom: 15px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            margin-bottom: 20px;
+        }
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .file-name {
+            margin-left: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .attachment-link {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .attachment-link:hover {
+            text-decoration: underline;
+        }
+        .editable {
+            background-color: #fff3cd;
+        }
+        .edit-btn {
+            background-color: #f39c12;
+        }
+        .edit-btn:hover {
+            background-color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+    <!-- 欢迎页面 -->
+    <div id="welcomePage" class="welcome-container">
+        <div class="logo">
+            <h1>陕西交控沥青公司</h1>
+        </div>
+        <h1 class="welcome-title">出入库管理系统</h1>
+        
+        <div class="entry-buttons">
+            <button class="entry-button upstream-btn" onclick="showLogin('upstream')">沥青公司入口</button>
+            <button class="entry-button downstream-btn" onclick="showLogin('downstream')">下游供应商入口</button>
+        </div>
+        
+        <!-- 沥青公司登录表单 -->
+        <div id="upstreamLoginForm" class="login-form">
+            <h2>沥青公司登录</h2>
+            <div class="form-group">
+                <label for="upstreamPassword">管理密码</label>
+                <input type="password" id="upstreamPassword" placeholder="请输入密码">
+            </div>
+            <button onclick="login('upstream')">登录</button>
+        </div>
+        
+        <!-- 下游供应商登录表单 -->
+        <div id="downstreamLoginForm" class="login-form">
+            <h2>供应商登录</h2>
+            <div class="form-group">
+                <label for="supplierSelect">供应商</label>
+                <select id="supplierSelect">
+                    <option value="">选择供应商</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="supplierPassword">密码</label>
+                <input type="password" id="supplierPassword" placeholder="请输入密码">
+            </div>
+            <button onclick="login('downstream')">登录</button>
+        </div>
+    </div>
+
+    <!-- 主系统界面 -->
+    <div id="mainSystem" class="container">
+        <button class="back-btn" onclick="logout()">← 退出登录</button>
+        <h1>陕西交控沥青公司出入库系统 <span id="userTypeDisplay"></span></h1>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="openTab('upstream')">上游管理</div>
+            <div class="tab" onclick="openTab('downstream')">下游管理</div>
+            <div class="tab" onclick="openTab('supplierManagement')" id="supplierManagementTab">供应商管理</div>
+        </div>
+        
+        <!-- 上游管理界面 -->
+        <div id="upstream" class="tab-content active">
+            <h2>创建订单</h2>
+            <div class="form-group">
+                <label for="orderName">订单名称</label>
+                <input type="text" id="orderName" placeholder="例如: 2023-05-沥青采购">
+            </div>
+            <div class="form-group">
+                <label for="supplier">供应商</label>
+                <select id="supplier">
+                    <option value="">选择供应商</option>
+                </select>
+            </div>
+            
+            <h2>添加车号</h2>
+            <div class="form-group">
+                <label for="truckNumber">车号</label>
+                <input type="text" id="truckNumber" placeholder="输入车号">
+                <button onclick="addTruck()">添加车号</button>
+            </div>
+            
+            <h2>当前订单车号列表</h2>
+            <table id="truckList">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>车号</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            
+            <button onclick="sendToSupplier()">发送给供应商</button>
+            
+            <h2>已发送订单</h2>
+            <table id="sentOrders">
+                <thead>
+                    <tr>
+                        <th>订单ID</th>
+                        <th>订单名称</th>
+                        <th>供应商</th>
+                        <th>车号数量</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- 下游管理界面 -->
+        <div id="downstream" class="tab-content">
+            <h2>待处理订单</h2>
+            <table id="receivedOrders">
+                <thead>
+                    <tr>
+                        <th>订单ID</th>
+                        <th>订单名称</th>
+                        <th>上游公司</th>
+                        <th>车号数量</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            
+            <div id="orderDetails" style="display: none;"></div>
+            
+            <h2>已处理订单</h2>
+            <table id="completedOrders">
+                <thead>
+                    <tr>
+                        <th>订单ID</th>
+                        <th>订单名称</th>
+                        <th>上游公司</th>
+                        <th>车号数量</th>
+                        <th>处理时间</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- 供应商管理界面 -->
+        <div id="supplierManagement" class="tab-content">
+            <h2>供应商管理</h2>
+            <div class="form-group">
+                <label for="newSupplierName">供应商名称</label>
+                <input type="text" id="newSupplierName" placeholder="输入供应商名称">
+            </div>
+            <div class="form-group">
+                <label for="newSupplierPassword">供应商密码</label>
+                <input type="password" id="newSupplierPassword" placeholder="设置供应商密码">
+            </div>
+            <button onclick="addSupplier()">添加供应商</button>
+            
+            <h2>供应商列表</h2>
+            <table id="supplierList">
+                <thead>
+                    <tr>
+                        <th>供应商名称</th>
+                        <th>密码</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentUserType = '';
+        let currentSupplier = '';
+        let suppliers = [
+            { name: '供应商A', password: 'aaa111' },
+            { name: '供应商B', password: 'bbb222' },
+            { name: '供应商C', password: 'ccc333' }
+        ];
+        let orders = [];
+        let currentTrucks = [];
+        let currentOrderId = '';
+        let attachments = {}; // 存储附件 {orderId: {truckNumber: file}}
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSupplierSelects();
+            renderSupplierList();
+            
+            // 示例数据
+            const orderId = 'ORD-' + new Date().getTime();
+            orders.push({
+                id: orderId,
+                name: '2023-05-沥青采购',
+                supplier: '供应商A',
+                trucks: [
+                    { number: '陕A12345', tareWeight: '', grossWeight: '', netWeight: '' },
+                    { number: '陕B54321', tareWeight: '', grossWeight: '', netWeight: '' }
+                ],
+                status: 'pending',
+                createTime: new Date().toLocaleString()
+            });
+            
+            // 初始化附件存储
+            attachments[orderId] = {
+                '陕A12345': null,
+                '陕B54321': null
+            };
+            
+            renderSentOrders();
+            
+            // 默认隐藏主系统
+            document.getElementById('mainSystem').style.display = 'none';
+        });
+        
+        // 显示登录表单
+        function showLogin(type) {
+            document.getElementById('upstreamLoginForm').style.display = 'none';
+            document.getElementById('downstreamLoginForm').style.display = 'none';
+            
+            if(type === 'upstream') {
+                document.getElementById('upstreamLoginForm').style.display = 'block';
+            } else {
+                document.getElementById('downstreamLoginForm').style.display = 'block';
+            }
+        }
+        
+        // 登录系统
+        function login(type) {
+            try {
+                if(type === 'upstream') {
+                    const password = document.getElementById('upstreamPassword').value;
+                    if(password === '123456') { // 上游固定密码
+                        currentUserType = 'upstream';
+                        document.getElementById('userTypeDisplay').textContent = '(沥青公司管理)';
+                        document.getElementById('supplierManagementTab').classList.remove('hidden');
+                        
+                        // 显示所有标签
+                        document.querySelectorAll('.tab').forEach(tab => tab.style.display = '');
+                        
+                        document.getElementById('welcomePage').style.display = 'none';
+                        document.getElementById('mainSystem').style.display = 'block';
+                        openTab('upstream');
+                    } else {
+                        alert('管理密码错误');
+                    }
+                } else {
+                    const supplierName = document.getElementById('supplierSelect').value;
+                    const password = document.getElementById('supplierPassword').value;
+                    
+                    const supplier = suppliers.find(s => s.name === supplierName);
+                    if (supplier && supplier.password === password) {
+                        currentUserType = 'downstream';
+                        currentSupplier = supplierName;
+                        document.getElementById('userTypeDisplay').textContent = `(${supplierName})`;
+                        document.getElementById('supplierManagementTab').classList.add('hidden');
+                        
+                        // 隐藏上游管理标签
+                        document.querySelector('.tab[onclick="openTab(\'upstream\')"]').style.display = 'none';
+                        
+                        document.getElementById('welcomePage').style.display = 'none';
+                        document.getElementById('mainSystem').style.display = 'block';
+                        openTab('downstream');
+                        renderReceivedOrders();
+                    } else {
+                        alert('供应商名称或密码错误');
+                    }
+                }
+            } catch (error) {
+                console.error('登录错误:', error);
+                alert('登录过程中发生错误');
+            }
+        }
+        
+        // 退出登录
+        function logout() {
+            try {
+                document.getElementById('mainSystem').style.display = 'none';
+                document.getElementById('welcomePage').style.display = 'block';
+                
+                // 重置所有标签显示状态
+                document.querySelectorAll('.tab').forEach(tab => tab.style.display = '');
+                
+                document.getElementById('upstreamPassword').value = '';
+                document.getElementById('supplierSelect').value = '';
+                document.getElementById('supplierPassword').value = '';
+                document.getElementById('upstreamLoginForm').style.display = 'none';
+                document.getElementById('downstreamLoginForm').style.display = 'none';
+                
+                currentUserType = '';
+                currentSupplier = '';
+            } catch (error) {
+                console.error('退出登录错误:', error);
+            }
+        }
+        
+        // 切换标签页
+        function openTab(tabName) {
+            try {
+                const tabs = document.getElementsByClassName('tab');
+                for (let i = 0; i < tabs.length; i++) {
+                    tabs[i].classList.remove('active');
+                }
+                
+                const tabContents = document.getElementsByClassName('tab-content');
+                for (let i = 0; i < tabContents.length; i++) {
+                    tabContents[i].classList.remove('active');
+                }
+                
+                document.querySelector(`.tab[onclick="openTab('${tabName}')"]`).classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            } catch (error) {
+                console.error('切换标签页错误:', error);
+            }
+        }
+        
+        // 更新供应商选择框
+        function updateSupplierSelects() {
+            try {
+                const supplierSelects = [
+                    document.getElementById('supplier'),
+                    document.getElementById('supplierSelect')
+                ];
+                
+                supplierSelects.forEach(select => {
+                    if (!select) return;
+                    
+                    // 保留第一个选项
+                    while (select.options.length > 1) {
+                        select.remove(1);
+                    }
+                    
+                    // 添加供应商选项
+                    suppliers.forEach(supplier => {
+                        const option = document.createElement('option');
+                        option.value = supplier.name;
+                        option.textContent = supplier.name;
+                        select.appendChild(option);
+                    });
+                });
+            } catch (error) {
+                console.error('更新供应商选择框错误:', error);
+            }
+        }
+        
+        // 添加供应商
+        function addSupplier() {
+            try {
+                const name = document.getElementById('newSupplierName').value.trim();
+                const password = document.getElementById('newSupplierPassword').value.trim();
+                
+                if (!name || !password) {
+                    alert('请输入供应商名称和密码');
+                    return;
+                }
+                
+                if (suppliers.some(s => s.name === name)) {
+                    alert('该供应商已存在');
+                    return;
+                }
+                
+                suppliers.push({ name, password });
+                updateSupplierSelects();
+                renderSupplierList();
+                
+                document.getElementById('newSupplierName').value = '';
+                document.getElementById('newSupplierPassword').value = '';
+                
+                alert(`供应商 ${name} 添加成功，密码为: ${password}`);
+            } catch (error) {
+                console.error('添加供应商错误:', error);
+                alert('添加供应商时发生错误');
+            }
+        }
+        
+        // 渲染供应商列表
+        function renderSupplierList() {
+            try {
+                const tbody = document.querySelector('#supplierList tbody');
+                tbody.innerHTML = '';
+                
+                suppliers.forEach(supplier => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${supplier.name}</td>
+                        <td class="supplier-password">${supplier.password}</td>
+                        <td><button class="secondary" onclick="deleteSupplier('${supplier.name}')">删除</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('渲染供应商列表错误:', error);
+            }
+        }
+        
+        // 删除供应商
+        function deleteSupplier(name) {
+            try {
+                if (!confirm(`确定要删除供应商 ${name} 吗？`)) return;
+                
+                suppliers = suppliers.filter(s => s.name !== name);
+                updateSupplierSelects();
+                renderSupplierList();
+            } catch (error) {
+                console.error('删除供应商错误:', error);
+                alert('删除供应商时发生错误');
+            }
+        }
+        
+        // 添加上游车号
+        function addTruck() {
+            try {
+                const truckNumber = document.getElementById('truckNumber').value.trim();
+                if (!truckNumber) {
+                    alert('请输入车号');
+                    return;
+                }
+                
+                currentTrucks.push(truckNumber);
+                renderTruckList();
+                document.getElementById('truckNumber').value = '';
+            } catch (error) {
+                console.error('添加车号错误:', error);
+                alert('添加车号时发生错误');
+            }
+        }
+        
+        // 渲染车号列表
+        function renderTruckList() {
+            try {
+                const tbody = document.querySelector('#truckList tbody');
+                tbody.innerHTML = '';
+                
+                currentTrucks.forEach((truck, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${truck}</td>
+                        <td><span class="status pending">待发送</span></td>
+                        <td><button class="secondary" onclick="deleteTruck(${index})">删除</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('渲染车号列表错误:', error);
+            }
+        }
+        
+        // 删除车号
+        function deleteTruck(index) {
+            try {
+                currentTrucks.splice(index, 1);
+                renderTruckList();
+            } catch (error) {
+                console.error('删除车号错误:', error);
+                alert('删除车号时发生错误');
+            }
+        }
+        
+        // 发送给供应商
+        function sendToSupplier() {
+            try {
+                const orderName = document.getElementById('orderName').value.trim();
+                const supplier = document.getElementById('supplier').value;
+                const truckCount = currentTrucks.length;
+                
+                if (!orderName || !supplier || truckCount === 0) {
+                    alert('请填写订单名称、选择供应商并添加至少一个车号');
+                    return;
+                }
+                
+                const orderId = 'ORD-' + new Date().getTime();
+                const newOrder = {
+                    id: orderId,
+                    name: orderName,
+                    supplier: supplier,
+                    trucks: currentTrucks.map(truck => ({ number: truck, tareWeight: '', grossWeight: '', netWeight: '' })),
+                    status: 'pending',
+                    createTime: new Date().toLocaleString()
+                };
+                
+                orders.push(newOrder);
+                
+                // 初始化附件存储
+                attachments[orderId] = {};
+                currentTrucks.forEach(truck => {
+                    attachments[orderId][truck] = null;
+                });
+                
+                alert(`订单 "${orderName}" 已发送给 ${supplier}，包含 ${truckCount} 个车号`);
+                
+                // 清空表单
+                document.getElementById('orderName').value = '';
+                document.getElementById('supplier').value = '';
+                currentTrucks = [];
+                renderTruckList();
+                renderSentOrders();
+            } catch (error) {
+                console.error('发送订单错误:', error);
+                alert('发送订单时发生错误');
+            }
+        }
+        
+        // 渲染已发送订单
+        function renderSentOrders() {
+            try {
+                const tbody = document.querySelector('#sentOrders tbody');
+                tbody.innerHTML = '';
+                
+                orders.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${order.id}</td>
+                        <td>${order.name}</td>
+                        <td>${order.supplier}</td>
+                        <td>${order.trucks.length}</td>
+                        <td><span class="status ${order.status === 'pending' ? 'pending' : 'completed'}">${
+                            order.status === 'pending' ? '待填写' : '已完成'
+                        }</span></td>
+                        <td><button onclick="viewOrderDetails('${order.id}')">查看</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('渲染已发送订单错误:', error);
+            }
+        }
+        
+        // 渲染接收到的订单（下游）
+        function renderReceivedOrders() {
+            try {
+                const tbody = document.querySelector('#receivedOrders tbody');
+                tbody.innerHTML = '';
+                
+                orders
+                    .filter(order => order.supplier === currentSupplier)
+                    .forEach(order => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${order.id}</td>
+                            <td>${order.name}</td>
+                            <td>陕西交控沥青公司</td>
+                            <td>${order.trucks.length}</td>
+                            <td><span class="status ${order.status === 'pending' ? 'pending' : 'completed'}">${
+                                order.status === 'pending' ? '待填写' : '已完成'
+                            }</span></td>
+                            <td><button onclick="openOrderDetails('${order.id}')">${
+                                order.status === 'pending' ? '填写' : '查看/编辑'
+                            }</button></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+            } catch (error) {
+                console.error('渲染接收订单错误:', error);
+            }
+        }
+        
+        // 查看订单详情（上游）
+        function viewOrderDetails(orderId) {
+            try {
+                const order = orders.find(o => o.id === orderId);
+                if (!order) return;
+                
+                alert(`订单 ${order.name} 详情\n供应商: ${order.supplier}\n车号数量: ${order.trucks.length}\n状态: ${
+                    order.status === 'pending' ? '待供应商填写' : '已完成'
+                }`);
+            } catch (error) {
+                console.error('查看订单详情错误:', error);
+            }
+        }
+        
+        // 打开订单详情（下游）
+        function openOrderDetails(orderId) {
+            try {
+                const order = orders.find(o => o.id === orderId);
+                if (!order) return;
+                
+                currentOrderId = orderId;
+                document.getElementById('orderDetails').style.display = 'block';
+                
+                // 添加编辑按钮（仅对已完成订单显示）
+                const editButton = order.status === 'completed' 
+                    ? `<button class="edit-btn" onclick="enableEdit('${orderId}')">重新编辑</button>` 
+                    : '';
+                
+                document.getElementById('orderDetails').innerHTML = `
+                    <h2>订单详情 <span id="orderIdDisplay">${order.name}</span> ${editButton}</h2>
+                    <table id="orderTrucks">
+                        <thead>
+                            <tr>
+                                <th>车号</th>
+                                <th>皮重(kg)</th>
+                                <th>毛重(kg)</th>
+                                <th>净重(kg)</th>
+                                <th>磅单附件</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div id="orderActions">
+                        <button onclick="calculateNetWeight()">计算净重</button>
+                        <button onclick="submitOrder()" ${order.status === 'completed' ? 'disabled' : ''}>提交订单</button>
+                    </div>
+                `;
+                
+                const tbody = document.querySelector('#orderTrucks tbody');
+                tbody.innerHTML = '';
+                
+                order.trucks.forEach((truck, index) => {
+                    const isCompleted = order.status === 'completed';
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${truck.number}</td>
+                        <td><input type="number" id="tareWeight_${orderId}_${index}" 
+                                   value="${truck.tareWeight || ''}" placeholder="输入皮重"
+                                   ${isCompleted ? 'disabled' : ''}></td>
+                        <td><input type="number" id="grossWeight_${orderId}_${index}" 
+                                   value="${truck.grossWeight || ''}" placeholder="输入毛重"
+                                   ${isCompleted ? 'disabled' : ''}></td>
+                        <td><span id="netWeight_${orderId}_${index}">${truck.netWeight || '-'}</span></td>
+                        <td>
+                            <div class="file-upload">
+                                <button ${isCompleted ? 'disabled' : ''}>选择磅单</button>
+                                <input type="file" id="attachment_${orderId}_${index}" 
+                                       onchange="handleFileUpload('${orderId}', '${truck.number}', this)"
+                                       ${isCompleted ? 'disabled' : ''}>
+                                <span class="file-name" id="fileName_${orderId}_${index}">${
+                                    attachments[orderId] && attachments[orderId][truck.number] 
+                                    ? attachments[orderId][truck.number].name 
+                                    : '未上传'
+                                }</span>
+                            </div>
+                        </td>
+                        <td>
+                            ${attachments[orderId] && attachments[orderId][truck.number] 
+                                ? `<a href="#" class="attachment-link" onclick="viewAttachment('${orderId}', '${truck.number}')">查看</a>` 
+                                : ''}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                // 如果是重新编辑，添加提示
+                if (order.status === 'pending' && order.completeTime) {
+                    const orderActions = document.getElementById('orderActions');
+                    const warning = document.createElement('div');
+                    warning.className = 'status pending';
+                    warning.textContent = '注意：您正在重新编辑已提交的订单';
+                    orderActions.prepend(warning);
+                }
+            } catch (error) {
+                console.error('打开订单详情错误:', error);
+                alert('加载订单详情时发生错误');
+            }
+        }
+        
+        // 处理文件上传
+        function handleFileUpload(orderId, truckNumber, input) {
+            try {
+                const file = input.files[0];
+                if (!file) return;
+                
+                if (!attachments[orderId]) {
+                    attachments[orderId] = {};
+                }
+                attachments[orderId][truckNumber] = file;
+                
+                document.getElementById(`fileName_${orderId}_${getTruckIndex(orderId, truckNumber)}`).textContent = file.name;
+                
+                // 刷新表格显示查看链接
+                openOrderDetails(orderId);
+            } catch (error) {
+                console.error('处理文件上传错误:', error);
+            }
+        }
+        
+        // 获取车号索引
+        function getTruckIndex(orderId, truckNumber) {
+            try {
+                const order = orders.find(o => o.id === orderId);
+                if (!order) return -1;
+                
+                return order.trucks.findIndex(t => t.number === truckNumber);
+            } catch (error) {
+                console.error('获取车号索引错误:', error);
+                return -1;
+            }
+        }
+        
+        // 查看附件
+        function viewAttachment(orderId, truckNumber) {
+            try {
+                const file = attachments[orderId] && attachments[orderId][truckNumber];
+                if (!file) return;
+                
+                // 在实际应用中，这里应该从服务器获取附件
+                alert(`查看附件: ${file.name}\n(实际应用中会显示或下载附件)`);
+            } catch (error) {
+                console.error('查看附件错误:', error);
+            }
+        }
+        
+        // 计算净重
+        function calculateNetWeight() {
+            try {
+                const order = orders.find(o => o.id === currentOrderId);
+                if (!order) return;
+                
+                order.trucks.forEach((truck, index) => {
+                    const tareWeight = parseFloat(document.getElementById(`tareWeight_${currentOrderId}_${index}`).value) || 0;
+                    const grossWeight = parseFloat(document.getElementById(`grossWeight_${currentOrderId}_${index}`).value) || 0;
+                    const netWeight = grossWeight - tareWeight;
+                    
+                    truck.tareWeight = tareWeight;
+                    truck.grossWeight = grossWeight;
+                    truck.netWeight = netWeight.toFixed(2);
+                    
+                    document.getElementById(`netWeight_${currentOrderId}_${index}`).textContent = truck.netWeight;
+                });
+                
+                alert('净重计算完成');
+            } catch (error) {
+                console.error('计算净重错误:', error);
+                alert('计算净重时发生错误');
+            }
+        }
+        
+        // 启用编辑
+        function enableEdit(orderId) {
+            try {
+                const order = orders.find(o => o.id === orderId);
+                if (!order) return;
+                
+                // 将订单状态改回待处理
+                order.status = 'pending';
+                
+                // 重新渲染订单详情，此时所有字段都可编辑
+                openOrderDetails(orderId);
+            } catch (error) {
+                console.error('启用编辑错误:', error);
+                alert('启用编辑时发生错误');
+            }
+        }
+        
+        // 提交订单（下游）
+        function submitOrder() {
+            try {
+                const order = orders.find(o => o.id === currentOrderId);
+                if (!order) return;
+                
+                // 检查是否所有车号都已填写
+                const incomplete = order.trucks.some(truck => 
+                    !truck.tareWeight || !truck.grossWeight || !truck.netWeight
+                );
+                
+                if (incomplete) {
+                    if (!confirm('还有车号未填写完整，确定要提交吗？')) return;
+                }
+                
+                order.status = 'completed';
+                order.completeTime = new Date().toLocaleString();
+                
+                alert('订单提交成功！');
+                document.getElementById('orderDetails').style.display = 'none';
+                renderReceivedOrders();
+                renderSentOrders();
+            } catch (error) {
+                console.error('提交订单错误:', error);
+                alert('提交订单时发生错误');
+            }
+        }
+    </script>
+</body>
+</html>
